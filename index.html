@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Borador Quiz</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --border: #dbeafe;
+      --error: #b91c1c;
+      --success: #166534;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px 12px;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+      padding: 24px;
+    }
+
+    h1 { margin-top: 0; }
+
+    .hidden { display: none; }
+
+    .field { margin-bottom: 14px; }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      max-width: 380px;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 1rem;
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .btn:hover { background: var(--primary-dark); }
+
+    .question {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      margin: 14px 0;
+      padding: 14px;
+      background: #f8fafc;
+    }
+
+    .question p {
+      margin: 0 0 10px;
+      font-weight: 700;
+    }
+
+    .choices label {
+      font-weight: 400;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    .message {
+      min-height: 22px;
+      margin-top: 10px;
+      font-weight: 700;
+      color: var(--error);
+    }
+
+    #result {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      background: #eff6ff;
+    }
+
+    .success { color: var(--success); }
+
+    #titlePage {
+      max-width: 520px;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section id="titlePage">
+      <h1>📘 Borador Quiz</h1>
+      <p><strong>Title Page:</strong> Ilagay ang iyong pangalan at password para makapasok sa quiz.</p>
+
+      <section id="loginSection">
+      <p>Ilagay ang pangalan at password para makapasok sa quiz.</p>
+
+      <div class="field">
+        <label for="studentName">Pangalan</label>
+        <input id="studentName" type="text" placeholder="Halimbawa: Juan Dela Cruz" />
+      </div>
+
+      <div class="field">
+        <label for="quizPassword">Password</label>
+        <input id="quizPassword" type="password" placeholder="Ilagay ang password" />
+      </div>
+
+      <button class="btn" id="enterBtn" type="button">Pumasok sa Quiz</button>
+      <p id="loginMessage" class="message"></p>
+      </section>
+    </section>
+
+    <section id="quizSection" class="hidden">
+      <p><strong>Pangalan:</strong> <span id="displayName"></span></p>
+      <p>Basahin ang bawat tanong at piliin ang tamang sagot. I-click ang letra ng sagot (A, B, C, o D).</p>
+
+      <form id="quizForm">
+        <div class="question">
+          <p>1. Ano ang tinutukoy na unang borador?</p>
+          <div class="choices">
+            <label><input type="radio" name="q1" value="A" /> A. Pinal na sulatin</label>
+            <label><input type="radio" name="q1" value="B" /> B. Pansamantalang sulatin</label>
+            <label><input type="radio" name="q1" value="C" /> C. Huling kopya</label>
+            <label><input type="radio" name="q1" value="D" /> D. Outline</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p>2. Alin ang unang hakbang sa pagsulat ng borador?</p>
+          <div class="choices">
+            <label><input type="radio" name="q2" value="A" /> A. Pagplaplano</label>
+            <label><input type="radio" name="q2" value="B" /> B. Pagsusulat ng final paper</label>
+            <label><input type="radio" name="q2" value="C" /> C. Pagsusuri ng sources</label>
+            <label><input type="radio" name="q2" value="D" /> D. Pag-edit</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p>3. Bakit mahalaga ang pagbabalangkas?</p>
+          <div class="choices">
+            <label><input type="radio" name="q3" value="A" /> A. Para matapos agad</label>
+            <label><input type="radio" name="q3" value="B" /> B. Para hindi magkamali</label>
+            <label><input type="radio" name="q3" value="C" /> C. Para maayos ang pagkakasunod ng ideya</label>
+            <label><input type="radio" name="q3" value="D" /> D. Para mas maganda ang sulatin</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p>4. Kailan ginagawa ang borador?</p>
+          <div class="choices">
+            <label><input type="radio" name="q4" value="A" /> A. Bago ang final paper</label>
+            <label><input type="radio" name="q4" value="B" /> B. Pagkatapos ng final paper</label>
+            <label><input type="radio" name="q4" value="C" /> C. Kasama sa bibliyograpiya</label>
+            <label><input type="radio" name="q4" value="D" /> D. Sa simula ng semester</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p>5. Ang borador ay nagsisilbing ano ng final paper?</p>
+          <div class="choices">
+            <label><input type="radio" name="q5" value="A" /> A. Kopya</label>
+            <label><input type="radio" name="q5" value="B" /> B. Halimbawa</label>
+            <label><input type="radio" name="q5" value="C" /> C. Huling bersyon</label>
+            <label><input type="radio" name="q5" value="D" /> D. Pundasyon</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p>6. Ang mga sumusunod ay maaaring gawin sa borador, maliban sa?</p>
+          <div class="choices">
+            <label><input type="radio" name="q6" value="A" /> A. Magdagdag ng ideya</label>
+            <label><input type="radio" name="q6" value="B" /> B. Bawasan</label>
+            <label><input type="radio" name="q6" value="C" /> C. Burahin</label>
+            <label><input type="radio" name="q6" value="D" /> D. Ayusin</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p>7. Ano ang huling bahagi ng research na naglalaman ng sources?</p>
+          <div class="choices">
+            <label><input type="radio" name="q7" value="A" /> A. Konklusyon</label>
+            <label><input type="radio" name="q7" value="B" /> B. Bibliyograpiya</label>
+            <label><input type="radio" name="q7" value="C" /> C. Introduksyon</label>
+            <label><input type="radio" name="q7" value="D" /> D. Resulta</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p>8. Bakit hindi dapat burahin ang borador?</p>
+          <div class="choices">
+            <label><input type="radio" name="q8" value="A" /> A. Para hindi magkamali</label>
+            <label><input type="radio" name="q8" value="B" /> B. Para maganda ang final copy</label>
+            <label><input type="radio" name="q8" value="C" /> C. Para makita ang progreso ng gawa</label>
+            <label><input type="radio" name="q8" value="D" /> D. Para mas mabilis matapos</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p>9. Saan nilalagay ang Layunin ng pag-aaral?</p>
+          <div class="choices">
+            <label><input type="radio" name="q9" value="A" /> A. Chapter 1</label>
+            <label><input type="radio" name="q9" value="B" /> B. Chapter 2</label>
+            <label><input type="radio" name="q9" value="C" /> C. Chapter 3</label>
+            <label><input type="radio" name="q9" value="D" /> D. Chapter 4</label>
+          </div>
+        </div>
+
+        <div class="question">
+          <p>10. Hindi na maaaring dagdagan ang borador, pag-tapos na ito.</p>
+          <div class="choices">
+            <label><input type="radio" name="q10" value="A" /> A. Tama</label>
+            <label><input type="radio" name="q10" value="B" /> B. Mali</label>
+            <label><input type="radio" name="q10" value="C" /> C. Depende sa guro</label>
+            <label><input type="radio" name="q10" value="D" /> D. Depende sa format</label>
+          </div>
+        </div>
+
+        <button class="btn" type="submit">Isumite ang Sagot</button>
+      </form>
+
+      <div id="result" class="hidden"></div>
+    </section>
+  </main>
+
+  <script>
+    const QUIZ_PASSWORD = "050610282009";
+    const ANSWERS = {
+      q1: "B",
+      q2: "A",
+      q3: "C",
+      q4: "A",
+      q5: "D",
+      q6: "C",
+      q7: "B",
+      q8: "C",
+      q9: "A",
+      q10: "B"
+    };
+
+    const titlePage = document.getElementById("titlePage");
+    const loginSection = document.getElementById("loginSection");
+    const quizSection = document.getElementById("quizSection");
+    const loginMessage = document.getElementById("loginMessage");
+    const displayName = document.getElementById("displayName");
+
+    document.getElementById("enterBtn").addEventListener("click", () => {
+      const studentName = document.getElementById("studentName").value.trim();
+      const password = document.getElementById("quizPassword").value.trim();
+
+      if (!studentName) {
+        loginMessage.textContent = "Pakilagay muna ang pangalan.";
+        return;
+      }
+
+      if (password !== QUIZ_PASSWORD) {
+        loginMessage.textContent = "Maling password. Pakisubukang muli.";
+        return;
+      }
+
+      displayName.textContent = studentName;
+      loginMessage.textContent = "";
+      titlePage.classList.add("hidden");
+      quizSection.classList.remove("hidden");
+    });
+
+    document.getElementById("quizForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      let score = 0;
+      let answered = 0;
+
+      for (const [question, correct] of Object.entries(ANSWERS)) {
+        const picked = document.querySelector(`input[name="${question}"]:checked`);
+        if (picked) {
+          answered += 1;
+          if (picked.value === correct) {
+            score += 1;
+          }
+        }
+      }
+
+      const result = document.getElementById("result");
+      result.classList.remove("hidden");
+      result.innerHTML = `
+        <p><strong>Nasagutan:</strong> ${answered}/10</p>
+        <p><strong>Iskor:</strong> ${score}/10</p>
+        <p class="success">Magaling! Maaari mong ulitin ang quiz kung gusto mo pang mag-practice.</p>
+      `;
+    });
+  </script>
+</body>
+</html>
