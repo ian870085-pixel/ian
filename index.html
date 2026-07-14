@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Caveman Race Picker</title>
+  <title>The Caveman</title>
   <style>
     :root {
       --sky: #87c7e8;
@@ -55,11 +55,28 @@
 
     .tagline { margin: 8px 0 0; font-size: 1.1rem; font-weight: 700; }
 
+    .tabs {
+      display: flex;
+      gap: 10px;
+      padding: 18px 28px 0;
+      background: #ffe7a0;
+    }
+
+    .tab {
+      border-radius: 18px 18px 0 0;
+      box-shadow: inset 0 -5px 0 rgba(94, 58, 26, .18), 0 4px 0 #5d3b21;
+      background: #d5f2a5;
+    }
+
+    .tab.active { background: var(--gold); transform: translateY(4px); box-shadow: inset 0 -3px 0 rgba(94, 58, 26, .18); }
+
+    .panel { display: none; padding: 22px 28px; }
+    .panel.active { display: block; }
+
     .controls {
       display: grid;
       grid-template-columns: minmax(260px, 1fr) auto;
       gap: 18px;
-      padding: 22px 28px;
       align-items: end;
     }
 
@@ -79,6 +96,20 @@
 
     .buttons { display: flex; flex-wrap: wrap; gap: 10px; }
 
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px;
+      border: 3px solid #5d3b21;
+      border-radius: 16px;
+      background: #fff8df;
+      font-weight: 900;
+    }
+
+    .option input { width: 22px; height: 22px; accent-color: #8d5524; }
+
     button {
       border: 0;
       border-radius: 999px;
@@ -96,7 +127,7 @@
     button.secondary { background: #bde0fe; }
     button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
 
-    .race-wrap { padding: 8px 28px 28px; }
+    .race-wrap { padding: 0; }
 
     .scoreboard {
       min-height: 62px;
@@ -166,14 +197,25 @@
     .caveman {
       width: 58px;
       height: 58px;
+      position: relative;
       display: grid;
       place-items: center;
       font-size: 42px;
       filter: drop-shadow(2px 4px 0 rgba(0,0,0,.18));
-      animation: bob .34s infinite alternate ease-in-out;
+      animation: runBody .26s infinite alternate ease-in-out;
     }
 
-    .runner:nth-child(even) .caveman { animation-delay: -.18s; }
+    .runner:nth-child(even) .caveman { animation-delay: -.13s; }
+
+    .caveman::after {
+      content: '〰️';
+      position: absolute;
+      margin-top: 38px;
+      margin-left: -38px;
+      font-size: 22px;
+      animation: dust .28s infinite linear;
+      opacity: .55;
+    }
 
     .name {
       max-width: 116px;
@@ -190,12 +232,27 @@
 
     .winner .name { background: #ffe66d; }
     .winner .caveman { animation: victory .45s infinite alternate ease-in-out; }
+    .close-call .name { background: #ffadad; }
+    .close-call::after { content: 'slowed!'; font-weight: 900; color: #8b1e1e; }
 
-    @keyframes bob { from { transform: translateY(4px) rotate(-4deg); } to { transform: translateY(-4px) rotate(5deg); } }
+    .history {
+      margin-top: 18px;
+      padding: 16px;
+      border: 4px solid #5d3b21;
+      border-radius: 18px;
+      background: #fff8df;
+    }
+
+    .history h2 { margin: 0 0 10px; }
+    .history ol { margin: 0; padding-left: 24px; font-weight: 800; }
+
+    @keyframes runBody { from { transform: translateY(5px) rotate(-9deg) scaleX(.95); } to { transform: translateY(-5px) rotate(8deg) scaleX(1.05); } }
+    @keyframes dust { from { transform: translateX(8px); opacity: .7; } to { transform: translateX(-16px); opacity: .05; } }
     @keyframes victory { from { transform: translateY(0) scale(1.05); } to { transform: translateY(-10px) scale(1.16) rotate(8deg); } }
 
     @media (max-width: 760px) {
       .controls { grid-template-columns: 1fr; }
+      .tabs { flex-wrap: wrap; }
       .buttons { justify-content: center; }
       .track { min-height: 420px; }
       .runner { width: 145px; }
@@ -206,28 +263,43 @@
 <body>
   <main class="app">
     <header>
-      <h1>🦴 Caveman Race Picker</h1>
-      <p class="tagline">Add names, start the race, and let the fastest cave person choose your winner.</p>
+      <h1>🦴 The Caveman</h1>
+      <p class="tagline">Build your cave crew, jump to the race tab, and watch a dramatic close-call sprint choose the winner.</p>
     </header>
 
-    <section class="controls" aria-label="Race setup">
-      <div>
-        <label for="names">Racers (one per line)</label>
-        <textarea id="names" spellcheck="false">Gronk
+    <nav class="tabs" aria-label="Caveman sections">
+      <button class="tab active" data-tab="setupPanel">Setup Cave</button>
+      <button class="tab" data-tab="racePanel">Race Track</button>
+    </nav>
+
+    <section id="setupPanel" class="panel active" aria-label="Race setup">
+      <div class="controls">
+        <div>
+          <label for="names">Racers (one per line)</label>
+          <textarea id="names" spellcheck="false">Gronk
 Ugga
 Bam-Bam
 Pebble
 Thunk
 Zara</textarea>
+          <label class="option" for="removeWinner">
+            <input id="removeWinner" type="checkbox" />
+            Remove each winner from the next race
+          </label>
+        </div>
+        <div class="buttons">
+          <button id="startBtn">Start Race</button>
+          <button id="shuffleBtn" class="secondary">Shuffle Names</button>
+          <button id="resetBtn" class="secondary">Reset</button>
+        </div>
       </div>
-      <div class="buttons">
-        <button id="startBtn">Start Race</button>
-        <button id="shuffleBtn" class="secondary">Shuffle Names</button>
-        <button id="resetBtn" class="secondary">Reset</button>
+      <div class="history">
+        <h2>Winners</h2>
+        <ol id="winnerList"></ol>
       </div>
     </section>
 
-    <section class="race-wrap" aria-label="Caveman race">
+    <section id="racePanel" class="panel race-wrap" aria-label="Caveman race">
       <div id="scoreboard" class="scoreboard">Ready at the starting rock!</div>
       <div id="track" class="track">
         <div class="finish" aria-hidden="true"></div>
@@ -243,11 +315,16 @@ Zara</textarea>
     const resetBtn = document.getElementById('resetBtn');
     const scoreboard = document.getElementById('scoreboard');
     const track = document.getElementById('track');
+    const removeWinner = document.getElementById('removeWinner');
+    const winnerList = document.getElementById('winnerList');
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.panel');
 
     const icons = ['🧔🏽‍♂️', '🧔🏻', '🧔🏾', '👩🏽‍🦱', '👨🏿‍🦱', '🧌', '🦣', '🐒'];
     let animationId;
     let racers = [];
     let racing = false;
+    let winners = [];
 
     function getNames() {
       return namesInput.value
@@ -278,7 +355,14 @@ Zara</textarea>
         lane.className = 'lane';
         const runner = document.createElement('div');
         runner.className = 'runner';
-        runner.innerHTML = `<span class="caveman">${icons[index % icons.length]}</span><span class="name" title="${racer.name}">${racer.name}</span>`;
+        const caveman = document.createElement('span');
+        caveman.className = 'caveman';
+        caveman.textContent = icons[index % icons.length];
+        const name = document.createElement('span');
+        name.className = 'name';
+        name.title = racer.name;
+        name.textContent = racer.name;
+        runner.append(caveman, name);
         lane.appendChild(runner);
         track.appendChild(lane);
         racer.element = runner;
@@ -287,8 +371,32 @@ Zara</textarea>
       scoreboard.textContent = racers.length ? 'Ready at the starting rock!' : 'Add at least one racer to begin.';
     }
 
+    function showTab(panelId) {
+      tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === panelId));
+      panels.forEach(panel => panel.classList.toggle('active', panel.id === panelId));
+    }
+
+    function recordWinner(name) {
+      winners.unshift(name);
+      winnerList.innerHTML = '';
+      winners.forEach((winner, index) => {
+        const item = document.createElement('li');
+        item.textContent = `${index + 1}. ${winner}`;
+        winnerList.appendChild(item);
+      });
+    }
+
+    function removeWinnerFromNames(name) {
+      if (!removeWinner.checked) return;
+      const names = getNames();
+      const index = names.indexOf(name);
+      if (index >= 0) names.splice(index, 1);
+      namesInput.value = names.join('\n');
+    }
+
     function startRace() {
       buildRace();
+      showTab('racePanel');
       if (!racers.length) return;
 
       racing = true;
@@ -297,6 +405,9 @@ Zara</textarea>
       const start = performance.now();
       const raceTime = 5200 + Math.random() * 1800;
       const winnerIndex = Math.floor(Math.random() * racers.length);
+      const closeCallIndex = racers.length > 1
+        ? (winnerIndex + 1 + Math.floor(Math.random() * (racers.length - 1))) % racers.length
+        : winnerIndex;
       const finishX = Math.max(120, track.clientWidth - 230);
 
       function tick(now) {
@@ -304,13 +415,17 @@ Zara</textarea>
         const base = Math.min(elapsed / raceTime, 1);
 
         racers.forEach((racer, index) => {
-          const winnerPush = index === winnerIndex ? Math.pow(base, 2.3) * 0.28 : 0;
-          const wobble = Math.sin(base * 18 + index) * 0.025;
+          const winnerPush = index === winnerIndex ? Math.pow(base, 2.3) * 0.29 : 0;
+          const closeCallSurge = index === closeCallIndex && base > 0.56 && base < 0.84 ? 0.24 : 0;
+          const closeCallSlowdown = index === closeCallIndex && base >= 0.84 ? (base - 0.84) * 1.9 : 0;
+          const wobble = Math.sin(base * 22 + index) * 0.026;
           const randomPace = racer.boost * 0.08;
-          racer.progress = Math.min(1, base * (0.76 + randomPace) + winnerPush + wobble);
+          racer.progress = Math.min(1, base * (0.76 + randomPace) + winnerPush + closeCallSurge - closeCallSlowdown + wobble);
+
+          racer.element.classList.toggle('close-call', index === closeCallIndex && base > 0.8 && base < 0.96);
 
           if (base > 0.9 && index !== winnerIndex) {
-            racer.progress = Math.min(racer.progress, 0.91 + Math.random() * 0.035);
+            racer.progress = Math.min(racer.progress, 0.88 + Math.random() * 0.07);
           }
 
           if (index === winnerIndex && base > 0.96) racer.progress = 1;
@@ -322,7 +437,9 @@ Zara</textarea>
         } else {
           const winner = racers[winnerIndex];
           winner.element.classList.add('winner');
-          scoreboard.textContent = `🏆 ${winner.name} wins the cave race!`;
+          scoreboard.textContent = `🏆 ${winner.name} wins the cave race! ${removeWinner.checked ? 'They head to the winner cave and leave the next race.' : 'They stay in for another round.'}`;
+          recordWinner(winner.name);
+          removeWinnerFromNames(winner.name);
           racing = false;
           startBtn.disabled = false;
         }
@@ -341,6 +458,7 @@ Zara</textarea>
       buildRace();
     }
 
+    tabs.forEach(tab => tab.addEventListener('click', () => showTab(tab.dataset.tab)));
     startBtn.addEventListener('click', startRace);
     shuffleBtn.addEventListener('click', shuffleNames);
     resetBtn.addEventListener('click', buildRace);
